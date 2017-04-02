@@ -23,7 +23,7 @@ public class Book {
         mAuthor = author;
     }
 
-    
+
     public String getTitle(){
         return mTitle;
     }
