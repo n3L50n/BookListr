@@ -140,11 +140,14 @@ public final class QueryUtility {
                 // Get a Book
                 JSONObject book = items.getJSONObject(i);
 
+                //TODO possibly step into volumeInfo here
                 // Get the title of a book
                 String title = book.getString("title");
 
                 // Get the authors array of a book
                 JSONArray authors = book.getJSONArray("authors");
+
+                //TODO Cycle through volumeInfo and perhaps build book within
 
                 // Cycle through Array of authors to get authors
                 for (int j = 0; j < authors.length(); j++){
