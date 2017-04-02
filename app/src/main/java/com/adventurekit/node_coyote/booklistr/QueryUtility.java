@@ -162,4 +162,22 @@ public final class QueryUtility {
         return books;
     }
 
+    public static List<Book> fetchBookData(String requestUrl){
+
+        // Pass in the configured url
+        URL url = createUrl(requestUrl);
+
+        // Perform http request to url and receive json back
+        String jsonReponse = null;
+        try {
+            jsonReponse = makeHttpRequest(url);
+        } catch (IOException e){
+            Log.e(LOG_TAG, "Error making HTTP Request", e);
+        }
+
+        List<Book> books = extractBooks(jsonReponse);
+
+        return books;
+    }
+
 }
