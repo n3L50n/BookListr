@@ -137,26 +137,29 @@ public final class QueryUtility {
             // Cycle through items within the array to create new Books
             for (int i = 0; i < items.length(); i++ ){
 
+                String author = null;
+
                 // Get a Book
                 JSONObject book = items.getJSONObject(i);
 
-                //TODO possibly step into volumeInfo here
+                // Get Volume info containing title and author
+                JSONObject volumeInfo = book.getJSONObject("volumeInfo");
+
                 // Get the title of a book
-                String title = book.getString("title");
+                String title = volumeInfo.getString("title");
 
                 // Get the authors array of a book
-                JSONArray authors = book.getJSONArray("authors");
-
-                //TODO Cycle through volumeInfo and perhaps build book within
+                JSONArray authors = volumeInfo.getJSONArray("authors");
 
                 // Cycle through Array of authors to get authors
                 for (int j = 0; j < authors.length(); j++){
-                    String author = authors.getString(j);
+                    author = authors.getString(j);
                 }
+
+//                String[] author = authors.getJSONArray(0);
 
                 Book newBook = new Book(title, author);
                 books.add(newBook);
-
             }
 
         } catch (JSONException e){
