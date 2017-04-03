@@ -1,29 +1,34 @@
 package com.adventurekit.node_coyote.booklistr;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
 
-    public static final String GOOGLE_BOOKS_REQUEST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=android&maxResults=1";
+    public static final String GOOGLE_BOOKS_REQUEST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=android&maxResults=10";
 
     // The base url to build a query upon
     //public static final String GOOGLE_BOOKS_REQUEST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
     // TODO do I need an API key?
     // API KEY
-    public static final String API_KEY = "AIzaSyCpdjPykoL3HtKyceMX5Jf8nd-q0f92iMs";
+    //public static final String API_KEY = "AIzaSyCpdjPykoL3HtKyceMX5Jf8nd-q0f92iMs";
 
     // Variable to store the adapter
-    public BookAdapter mAdapter;
+    private BookAdapter mAdapter;
+
+    private TextView mEmptyStateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +38,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //Find a reference to the {@link ListView}
         ListView bookListView = (ListView) findViewById(R.id.book_list);
 
-        //Create a new {@link ArrayAdapter} of Books
+        //Create a new {@link ArrayAdapter} of Books and set it to the adapter
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
-
         bookListView.setAdapter(mAdapter);
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()){
+            getLoaderManager().initLoader(0, null, this);
+        } else {
+            mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
+            bookListView.setEmptyView(mEmptyStateTextView);
+            View loadingIndicator =  findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
+
+            mEmptyStateTextView.setText(R.string.no_internet_connection);
+        }
 
     }
 

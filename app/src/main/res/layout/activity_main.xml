@@ -4,21 +4,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/search_bar"
+    <LinearLayout
+        android:id="@+id/search_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_hint" />
+
+        <ImageButton
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_search_black_24px"
+            android:contentDescription="@string/search_button_description" />
+
+    </LinearLayout>
 
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_below="@+id/search_layout"
         android:id="@+id/book_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <!--&lt;!&ndash;Empty text view when there are no items to display&ndash;&gt;-->
-    <!--<TextView-->
-        <!--android:id="@+id/empty_view"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <!--Loading indicator shown if appropriate -->
     <ProgressBar

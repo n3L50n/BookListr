@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BookListr</string>
+
+    <string name="no_internet_connection">Hmmm&#8230; let\'s check those internet settings, eh?!</string>
+    <string name="search_hint">Enter title or author of a book</string>
+    <string name="search_button_description">A search icon svg</string>
+
 </resources>

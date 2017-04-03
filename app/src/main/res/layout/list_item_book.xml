@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/book_item_cell_padding"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/book_title"
+        style="@style/TitleTextStyle"/>
+
+    <TextView
+        android:id="@+id/book_author"
+        style="@style/AuthorTextStyle" />
 
 </LinearLayout>

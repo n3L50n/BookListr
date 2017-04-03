@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,23 @@ public class BookAdapter extends ArrayAdapter<Book> {
         // If there are no list items, add list items
         if (listItem == null){
             listItem = LayoutInflater.from(getContext()).inflate(R.layout.list_item_book, parent, false);
+        }
+
+        // Get a Book in the list
+        final Book currentBook = getItem(position);
+
+        // find and set Title of book
+        String currentTitle = currentBook.getTitle();
+        TextView titleTextView = (TextView) listItem.findViewById(R.id.book_title);
+        if (currentTitle != null) {
+            titleTextView.setText(currentTitle);
+        }
+
+        // find and set Author of book
+        String currentAuthor = currentBook.getAuthor();
+        TextView authorTextView = (TextView) listItem.findViewById(R.id.book_author);
+        if (currentAuthor != null){
+            authorTextView.setText(currentAuthor);
         }
 
         return listItem;
