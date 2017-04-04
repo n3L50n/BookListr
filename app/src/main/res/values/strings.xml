@@ -4,5 +4,7 @@
     <string name="no_internet_connection">Hmmm&#8230; let\'s check those internet settings, eh?!</string>
     <string name="search_hint">Enter title or author of a book</string>
     <string name="search_button_description">A search icon svg</string>
+    <string name="empty_view_text">Try searching for a book!</string>
+    <string name="empty_view_text_nothing"> </string>
 
 </resources>

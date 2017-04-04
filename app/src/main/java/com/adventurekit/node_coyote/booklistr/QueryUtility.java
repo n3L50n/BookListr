@@ -38,6 +38,7 @@ public final class QueryUtility {
 
     /**
      * Helper method checks if a URL is legit
+     *
      * @param stringUrl
      * @return
      */
@@ -53,10 +54,10 @@ public final class QueryUtility {
 
     private static String makeHttpRequest(URL url) throws IOException {
         // An empty String to hold a response, most likely JSON
-        String response  = "";
+        String response = "";
 
         // If empty, leave early
-        if (url == null){
+        if (url == null) {
             return response;
         }
 
@@ -72,19 +73,19 @@ public final class QueryUtility {
             /** Check if Request is successful indicated by 200 responseCode.
              * If successful, get the input stream and begin to read from it.
              */
-            if (httpURLConnection.getResponseCode() == 200){
+            if (httpURLConnection.getResponseCode() == 200) {
                 inputStream = httpURLConnection.getInputStream();
                 response = readFromStream(inputStream);
             } else {
                 Log.e(LOG_TAG, "Error response code " + httpURLConnection.getResponseCode());
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             Log.e(LOG_TAG, "Problem parsing response");
         } finally {
-            if (httpURLConnection != null){
+            if (httpURLConnection != null) {
                 httpURLConnection.disconnect();
             }
-            if (inputStream != null){
+            if (inputStream != null) {
                 inputStream.close();
             }
         }
@@ -93,17 +94,18 @@ public final class QueryUtility {
 
     /**
      * Use a StringBuilder to assembled the output into usable data
+     *
      * @param inputStream
      * @return
      * @throws IOException
      */
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
-        if (inputStream != null){
+        if (inputStream != null) {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
             BufferedReader reader = new BufferedReader(inputStreamReader);
             String line = reader.readLine();
-            while (line != null){
+            while (line != null) {
                 output.append(line);
                 line = reader.readLine();
             }
@@ -112,14 +114,13 @@ public final class QueryUtility {
     }
 
     /**
-     *
      * @param googleBooksJSON
      * @return
      */
     private static List<Book> extractBooks(String googleBooksJSON) {
 
         // Check if JSON is empty and return if so
-        if (TextUtils.isEmpty(googleBooksJSON)){
+        if (TextUtils.isEmpty(googleBooksJSON)) {
             return null;
         }
 
@@ -135,9 +136,9 @@ public final class QueryUtility {
             JSONArray items = response.getJSONArray("items");
 
             // Cycle through items within the array to create new Books
-            for (int i = 0; i < items.length(); i++ ){
+            for (int i = 0; i < items.length(); i++) {
 
-                String author = null;
+                String authors = null;
 
                 // Get a Book
                 JSONObject book = items.getJSONObject(i);
@@ -149,26 +150,25 @@ public final class QueryUtility {
                 String title = volumeInfo.getString("title");
 
                 // Get the authors array of a book
-                JSONArray authors = volumeInfo.getJSONArray("authors");
+                JSONArray authorsArray = volumeInfo.getJSONArray("authors");
 
-                // Cycle through Array of authors to get authors
-                for (int j = 0; j < authors.length(); j++){
-                    author = authors.getString(j);
+                if (volumeInfo.optJSONArray("authors") != null){
+                    // Cycle through Array of authors to get authors
+                    for (int j = 0; j < authorsArray.length(); j++) {
+                        authors = authorsArray.getString(j);
+                    }
                 }
-
-//                String[] author = authors.getJSONArray(0);
-
-                Book newBook = new Book(title, author);
+                Book newBook = new Book(title, authors);
                 books.add(newBook);
             }
 
-        } catch (JSONException e){
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing JSON results", e);
         }
         return books;
     }
 
-    public static List<Book> fetchBookData(String requestUrl){
+    public static List<Book> fetchBookData(String requestUrl) {
 
         // Pass in the configured url
         URL url = createUrl(requestUrl);
@@ -177,7 +177,7 @@ public final class QueryUtility {
         String jsonReponse = null;
         try {
             jsonReponse = makeHttpRequest(url);
-        } catch (IOException e){
+        } catch (IOException e) {
             Log.e(LOG_TAG, "Error making HTTP Request", e);
         }
 
@@ -185,7 +185,6 @@ public final class QueryUtility {
 
         return books;
     }
-
 
 
 }

@@ -21,18 +21,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public static final String GOOGLE_BOOKS_REQUEST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
-    // The base url to build a query upon
-    //public static final String GOOGLE_BOOKS_REQUEST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=";
-
-    // TODO do I need an API key?
-    // API KEY
-    //public static final String API_KEY = "&key=AIzaSyCpdjPykoL3HtKyceMX5Jf8nd-q0f92iMs";
-
     // Variable to store the adapter
     private BookAdapter mAdapter;
 
     private String mTotal;
-    private String mSearchQuery;
     private TextView mEmptyStateTextView;
 
     @Override
@@ -49,10 +41,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
+
         if (networkInfo != null && networkInfo.isConnected()) {
             getLoaderManager().initLoader(0, null, this);
+            mEmptyStateTextView.setText(R.string.empty_view_text);
         } else {
-            mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
             bookListView.setEmptyView(mEmptyStateTextView);
             View loadingIndicator = findViewById(R.id.loading_indicator);
             loadingIndicator.setVisibility(View.GONE);
@@ -65,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 Log.v("Search query is ", mTotal);
                 LoaderManager loaderManager = getLoaderManager();
@@ -86,15 +79,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // Grab Search View
         EditText searchInput = (EditText) findViewById(R.id.search_bar);
-        mSearchQuery = searchInput.getText().toString();
-        if (mSearchQuery.contains(" ")) {
-            for (int i = 0; i < mSearchQuery.length(); i++) {
-                mSearchQuery.replaceAll(" ", "+");
+        String searchQuery = searchInput.getText().toString();
+        if (searchQuery.contains(" ")) {
+            for (int i = 0; i < searchQuery.length(); i++) {
+                searchQuery.replaceAll("\\s","+");
             }
         }
 
         Log.v("TAG", "Search query after loop is " + baseUrl);
-        mTotal = GOOGLE_BOOKS_REQUEST_BASE_URL + mSearchQuery + "&maxResults=10";
+        mTotal = GOOGLE_BOOKS_REQUEST_BASE_URL + searchQuery + "&maxResults=10";
         Log.v("TAG", "Search total  is " + mTotal);
 
         return mTotal;
