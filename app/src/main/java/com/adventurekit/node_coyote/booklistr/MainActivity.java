@@ -49,12 +49,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()){
+        if (networkInfo != null && networkInfo.isConnected()) {
             getLoaderManager().initLoader(0, null, this);
         } else {
             mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
             bookListView.setEmptyView(mEmptyStateTextView);
-            View loadingIndicator =  findViewById(R.id.loading_indicator);
+            View loadingIndicator = findViewById(R.id.loading_indicator);
             loadingIndicator.setVisibility(View.GONE);
 
             mEmptyStateTextView.setText(R.string.no_internet_connection);
@@ -65,9 +65,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getRequestUrl(mTotal);
+
+
                 Log.v("Search query is ", mTotal);
                 LoaderManager loaderManager = getLoaderManager();
+                loaderManager.restartLoader(1, null, MainActivity.this);
                 loaderManager.initLoader(1, null, MainActivity.this);
             }
         });
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Begin with Google Books basic url
         baseUrl = GOOGLE_BOOKS_REQUEST_BASE_URL;
 
-        Log.v("TAG" ,"Search query before loop is " + baseUrl);
+        Log.v("TAG", "Search query before loop is " + baseUrl);
 
         // Grab Search View
         EditText searchInput = (EditText) findViewById(R.id.search_bar);
@@ -91,17 +93,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }
 
-        Log.v("TAG" ,"Search query after loop is " + baseUrl);
-        mTotal =  GOOGLE_BOOKS_REQUEST_BASE_URL + mSearchQuery;
-        Log.v("TAG" ,"Search total  is " + mTotal);
+        Log.v("TAG", "Search query after loop is " + baseUrl);
+        mTotal = GOOGLE_BOOKS_REQUEST_BASE_URL + mSearchQuery + "&maxResults=10";
+        Log.v("TAG", "Search total  is " + mTotal);
 
         return mTotal;
     }
 
     @Override
     public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
-        Log.v("TAG" ,"onCreateLoader total  is " + mTotal);
-
+        Log.v("TAG", "onCreateLoader total is " + mTotal);
+        mAdapter.clear();
+        getRequestUrl(mTotal);
         return new BookLoader(MainActivity.this, mTotal);
     }
 
@@ -112,15 +115,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         View loadingIndicator = findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
 
+        // Clear adapter of previous Book data
         mAdapter.clear();
 
-        if (bookData != null && !bookData.isEmpty()){
+        getRequestUrl(mTotal);
+        if (bookData != null && !bookData.isEmpty()) {
             mAdapter.addAll(bookData);
         }
+        Log.v("TAG", "onLoadFinished is " + mTotal);
+
     }
 
     @Override
     public void onLoaderReset(Loader<List<Book>> loader) {
+
         mAdapter.clear();
+        Log.v("TAG", "onLoadReset is " + mTotal);
+
     }
 }
