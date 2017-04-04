@@ -7,7 +7,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,18 +19,20 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
 
-    public static final String GOOGLE_BOOKS_REQUEST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=android&maxResults=10";
+    public static final String GOOGLE_BOOKS_REQUEST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
     // The base url to build a query upon
     //public static final String GOOGLE_BOOKS_REQUEST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
     // TODO do I need an API key?
     // API KEY
-    //public static final String API_KEY = "AIzaSyCpdjPykoL3HtKyceMX5Jf8nd-q0f92iMs";
+    //public static final String API_KEY = "&key=AIzaSyCpdjPykoL3HtKyceMX5Jf8nd-q0f92iMs";
 
     // Variable to store the adapter
     private BookAdapter mAdapter;
 
+    private String mTotal;
+    private String mSearchQuery;
     private TextView mEmptyStateTextView;
 
     @Override
@@ -55,27 +60,49 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mEmptyStateTextView.setText(R.string.no_internet_connection);
         }
 
+        // Set a click listener on the search button
+        ImageButton searchIcon = (ImageButton) findViewById(R.id.search_button);
+        searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getRequestUrl(mTotal);
+                Log.v("Search query is ", mTotal);
+                LoaderManager loaderManager = getLoaderManager();
+                loaderManager.initLoader(1, null, MainActivity.this);
+            }
+        });
+
     }
 
 
-//    public String getRequestUrl(String baseUrl) {
-//
-//        // Begin with Google Books basic url
-//        baseUrl = GOOGLE_BOOKS_REQUEST_BASE_URL;
-//
-//        //TODO for each word entered in search, split between spaces
-//
-//        // Grab Search View
-//        EditText searchInput = (EditText) findViewById(R.id.search_bar);
-//        String searchQuery = searchInput.getText().toString();
-//        String requestUrl = baseUrl + searchQuery + "&key=" + API_KEY;
-//
-//        return requestUrl;
-//    }
+    public String getRequestUrl(String baseUrl) {
+
+        // Begin with Google Books basic url
+        baseUrl = GOOGLE_BOOKS_REQUEST_BASE_URL;
+
+        Log.v("TAG" ,"Search query before loop is " + baseUrl);
+
+        // Grab Search View
+        EditText searchInput = (EditText) findViewById(R.id.search_bar);
+        mSearchQuery = searchInput.getText().toString();
+        if (mSearchQuery.contains(" ")) {
+            for (int i = 0; i < mSearchQuery.length(); i++) {
+                mSearchQuery.replaceAll(" ", "+");
+            }
+        }
+
+        Log.v("TAG" ,"Search query after loop is " + baseUrl);
+        mTotal =  GOOGLE_BOOKS_REQUEST_BASE_URL + mSearchQuery;
+        Log.v("TAG" ,"Search total  is " + mTotal);
+
+        return mTotal;
+    }
 
     @Override
     public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
-        return new BookLoader(MainActivity.this, GOOGLE_BOOKS_REQUEST_BASE_URL);
+        Log.v("TAG" ,"onCreateLoader total  is " + mTotal);
+
+        return new BookLoader(MainActivity.this, mTotal);
     }
 
     @Override

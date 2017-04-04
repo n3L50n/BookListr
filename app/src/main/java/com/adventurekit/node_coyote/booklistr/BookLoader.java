@@ -2,6 +2,7 @@ package com.adventurekit.node_coyote.booklistr;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class BookLoader extends AsyncTaskLoader<List<Book>> {
         }
 
         List<Book> books = QueryUtility.fetchBookData(mUrl);
+        Log.v("TAG" ,"loadInBackground total  is " + mUrl);
 
         return books;
     }
