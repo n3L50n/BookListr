@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private String mTotal;
     private TextView mEmptyStateTextView;
+    private ListView mBookListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,21 +34,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         //Find a reference to the {@link ListView}
-        ListView bookListView = (ListView) findViewById(R.id.book_list);
+        mBookListView = (ListView) findViewById(R.id.book_list);
 
         //Create a new {@link ArrayAdapter} of Books and set it to the adapter
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
-        bookListView.setAdapter(mAdapter);
+        mBookListView.setAdapter(mAdapter);
+
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-
         if (networkInfo != null && networkInfo.isConnected()) {
-            getLoaderManager().initLoader(0, null, this);
+            getLoaderManager().initLoader(0, null, MainActivity.this);
             mEmptyStateTextView.setText(R.string.empty_view_text);
         } else {
-            bookListView.setEmptyView(mEmptyStateTextView);
+            mBookListView.setEmptyView(mEmptyStateTextView);
             View loadingIndicator = findViewById(R.id.loading_indicator);
             loadingIndicator.setVisibility(View.GONE);
 
@@ -59,11 +60,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Log.v("Search query is ", mTotal);
                 LoaderManager loaderManager = getLoaderManager();
-                loaderManager.restartLoader(1, null, MainActivity.this);
-                loaderManager.initLoader(1, null, MainActivity.this);
+
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    loaderManager.restartLoader(1, null, MainActivity.this);
+                    loaderManager.initLoader(1, null, MainActivity.this);
+                    mEmptyStateTextView.setText(R.string.empty_view_text_nothing);
+                } else {
+                    loaderManager.initLoader(1, null, MainActivity.this);
+                    mBookListView.setEmptyView(mEmptyStateTextView);
+                    View loadingIndicator = findViewById(R.id.loading_indicator);
+                    loadingIndicator.setVisibility(View.GONE);
+                    mEmptyStateTextView.setText(R.string.no_internet_connection);
+                }
+                Log.v("Search query is ", mTotal);
             }
         });
 
@@ -80,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Grab Search View
         EditText searchInput = (EditText) findViewById(R.id.search_bar);
         String searchQuery = searchInput.getText().toString();
-        if (searchQuery.contains(" ")) {
+        if (searchQuery.contains("\\s")) {
             for (int i = 0; i < searchQuery.length(); i++) {
                 searchQuery.replaceAll("\\s","+");
             }
