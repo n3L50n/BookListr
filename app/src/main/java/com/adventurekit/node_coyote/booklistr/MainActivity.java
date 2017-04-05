@@ -27,12 +27,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mTotal;
     private TextView mEmptyStateTextView;
     private ListView mBookListView;
+    private boolean mHasBeenClicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mHasBeenClicked = false;
         //Find a reference to the {@link ListView}
         mBookListView = (ListView) findViewById(R.id.book_list);
 
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     mEmptyStateTextView.setText(R.string.no_internet_connection);
                 }
                 Log.v("Search query is ", mTotal);
+                mHasBeenClicked = true;
             }
         });
 
@@ -124,9 +127,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mAdapter.clear();
 
         getRequestUrl(mTotal);
+
         if (bookData != null && !bookData.isEmpty()) {
             mAdapter.addAll(bookData);
         }
+        if (bookData == null && mHasBeenClicked){
+                mEmptyStateTextView.setText(R.string.empty_view_text_no_results);
+            }
         Log.v("TAG", "onLoadFinished is " + mTotal);
 
     }

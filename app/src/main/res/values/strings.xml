@@ -6,5 +6,6 @@
     <string name="search_button_description">A search icon svg</string>
     <string name="empty_view_text">Try searching for a book!</string>
     <string name="empty_view_text_nothing"> </string>
+    <string name="empty_view_text_no_results">No results found! Try modifying your search!</string>
 
 </resources>
